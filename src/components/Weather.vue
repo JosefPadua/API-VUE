@@ -66,15 +66,24 @@
                   {{ currentDay() }}
                 </h2>
                 <h3 class="leading-none pb-2 pl-1">{{ currentDate() }}</h3>
-                <p class="flex aling-center opacity-75" v-if="this.done">
+                <p v-if="!editing" class="flex aling-center opacity-75">
                   <img
                     src="@/assets/weather/placeholder.svg"
                     width="25px"
                     style="margin-right: 3px"
                   />
                   {{ currentWeather.name }} ({{ currentWeather.sys.country }})
-                  &nbsp;[ <a href="" @click.prevent="">change</a> ]
+                  &nbsp;[ <a href="" @click.prevent="editing =! editing">change</a> ]
                 </p>
+                <div v-if="editing" class="mb-3 pt-0">
+                  <input
+                    type="text"
+                    placeholder="Location"
+                    v-model="city"
+                    class="px-3 py-3 placeholder-gray-400 text-gray-700 relative bg-white bg-white rounded text-sm shadow outline-none focus:outline-none focus:shadow-outline w-full"
+                  />
+                  <button @click="changeLoc()">Confirm</button>
+                </div>
               </div>
               <div>
                 <WeatherSvg :icon="icon" />
@@ -200,6 +209,7 @@ export default {
       secondDone: false,
       errFet: "",
       isEnv: false,
+      editing: false
     };
   },
   methods: {
@@ -277,6 +287,10 @@ export default {
     getEnv() {
       process.env.VUE_APP_KEY ? (this.isEnv = true) : (this.isEnv = false);
     },
+    changeLoc() {
+        this.editing = false;
+        this.loadWeather();
+    }
   },
   beforeMount() {
     this.getEnv();
